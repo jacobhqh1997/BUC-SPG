@@ -1,8 +1,4 @@
-
-
 import numpy as np
-
-
 def compute_coloc_m(t, m) -> float:
 
     t, m = np.asarray(t, dtype=float), np.asarray(m, dtype=float)
