@@ -1,5 +1,4 @@
-"""Anonymous TNSL-Net final-fit training logic; not a reproduction package.
-
+"""
 Inputs: frozen features [B,9,D], valid_mask [B,9], positions [9,2],
 soft_target [B,4] (nonnegative rows summing to one), sample_weight [B].
 Only the centre soft target is supervised; neighbouring tokens provide context.
