@@ -1,4 +1,4 @@
-"""Anonymous TINSPGNet training logic; not a reproduction package.
+"""
 
 One variable-length slide bag per step: frozen morphology features, coordinates,
 tissue probabilities, niche probabilities and a precomputed text embedding.
