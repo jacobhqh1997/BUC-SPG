@@ -68,8 +68,7 @@ Frozen UNI embeddings and registered patch-grid coordinates are assembled into
 centre-plus-eight-neighbour inputs. CTP-Net produces an **H × W × 8 tissue
 probability map**. TNSL-Net predicts **H × W × 4 N1–N4 niche probabilities** at
 tumour centres, retaining the surrounding tissue as context. Continuous probabilities
-are preserved; unevaluated positions are masked. See [inference/README.md](inference/README.md)
-for the input contract and function-level example.
+are preserved; unevaluated positions are masked.
 
 ## Spatial Bioinformatics
 
