@@ -1,4 +1,4 @@
-"""Anonymous CTP-Net training-logic example; not a reproduction package.
+"""
 
 Supply an initialized eight-class model and preprocessed tensor loaders.
 Frozen image embeddings: features [B, 9, D]; valid_mask [B, 9];
