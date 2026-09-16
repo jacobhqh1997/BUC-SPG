@@ -14,36 +14,19 @@ Bladder Urothelial carcinoma (BUC), remains a prevalent and lethal malignancy wi
 * **Feature_extractor**: * textual, and microscopic feature extraction.*
 * **Biomarker_core**: Detailed code definitions for each Biomarker
 * **model_architectures**: Detailed model architectures
+* **inference**: Contextual CTP-Net and TNSL-Net inference and probability heatmaps.
+* **bioinformatics**: Spatial preprocessing, ecosystem discovery, differentiation scoring and patient-level comparisons.
 
-## Pre-requisites and Environment
+## Software and Environment
 
-### Our Environment
+The project uses separate environments for multimodal pathology, spatial
+bioinformatics and R-based survival analysis. See [software_versions.txt](software_versions.txt)
+for recorded analysis versions and the dated inventory of the available environments.
+The inventory is documentation, not a single installation lock file.
 
-* Linux (Tested on Ubuntu 24.04)
-* NVIDIA GPU (Tested on Nvidia GeForce RTX A6000)
-* Python (3.12.6), PyTorch (version 2.0.0), Lifelines (version 0.27.8), NumPy (version 1.24.1),MONAI (version 1.3), Pandas (version 2.1.2), Albumentations (version 1.3.1), OpenCV (version 4.8.1), Pillow (version 9.3.0), OpenSlide (version 1.1.2), Captum (version 0.6.0), SciPy (version 1.11.3), Seaborn (version 0.13.0), Matplotlib (version 3.8.1), torch_geometric (version 2.4.0), torch-scatter (version 2.1.2), torch-sparse (version 0.6.18).
-
-### Environment Configuration
-
-1. Create a virtual environment and install PyTorch. In the 3rd step, please select the correct Pytorch version that matches your CUDA version from [https://pytorch.org/get-started/previous-versions/](https://pytorch.org/get-started/previous-versions/).
-
-   ```bash
-   $ conda create -n env python=3.12.6
-   $ conda activate env
-   $ pip install torch
-   ```
-
-   *Note:  `pip install` command is required for Pytorch installation.*
-2. To try out the Python code and set up environment, please activate the `env` environment first:
-
-   ```shell
-   $ conda activate env
-   ```
-3. For ease of use, you can just set up the environment and run the following:
-
-   ```shell
-   $ pip install -r requirements.txt
-   ```
+The public code explains the methods and model interfaces. Private patient data,
+pathology annotations and trained checkpoints are not included; study-specific
+inputs and compatible software environments are required for execution.
 
 ---
 
@@ -79,15 +62,45 @@ $ cd ./Data_process
 $ python UC_report_standardization_ground_generation.py
 ```
 
-### Generate knowledge-guided patch representation
+### Generate spatial probability heatmaps
 
-- Create original  tissue probability heatmaps and Niche score distribution heatmap. WSIs are first processed by CTP-Net and TNSL-Net  to get  probability heatmaps, knowledge-guided patch representation: create tissue probability heatmaps and Niche score distribution heatmap
+Frozen UNI embeddings and registered patch-grid coordinates are assembled into
+centre-plus-eight-neighbour inputs. CTP-Net produces an **H × W × 8 tissue
+probability map**. TNSL-Net predicts **H × W × 4 N1–N4 niche probabilities** at
+tumour centres, retaining the surrounding tissue as context. Continuous probabilities
+are preserved; unevaluated positions are masked. See [inference/README.md](inference/README.md)
+for the input contract and function-level example.
 
-```shell
-  $ cd ./Data_process
-  $ python  infer_ctp_net.py
-  $ python  infer_tnsl_net.py 
-```
+## Spatial Bioinformatics
+
+The biological workflow connects high-definition spatial profiling to the priors
+used by the histology models:
+
+1. **Preprocessing and annotation:** segmented-cell QC, count preservation,
+   normalization and log transformation; scVI batch integration with a 10-dimensional
+   latent space; marker-reviewed labels and confidence-filtered logistic propagation.
+2. **Spatial domains and ecosystems:** specimen-specific Delaunay graphs and
+   three-layer CellCharter aggregation define whole-tissue domains. Tumour anchors
+   within reviewed regions are described using 112-µm neighbourhoods, latent
+   features and cell composition, followed by scaling, PCA and full-covariance
+   mixture modeling. Reviewed solutions comprise 12 domains and four ecosystems.
+3. **Histology supervision and differentiation:** anchor posterior probabilities
+   are averaged within registered tiles containing at least five anchors. Three
+   epithelial program scores define a relative differentiation coordinate; pooled
+   probability-weighted ecosystem coordinates provide a fixed reference for
+   projecting TNSL-Net predictions.
+4. **Spatial comparisons:** specimen-level core–front comparisons use exact
+   sign-flip tests. ADC-target expression is compared between muscle-proximal
+   and distal compartments using paired Wilcoxon tests and BH correction, with
+   proximal thresholds of 24, 32 (primary), 40 and 48 µm. Public cohorts provide
+   complementary patient-level spatial comparisons.
+
+The code is organized into `preprocessing.py`, `ecosystems.py`,
+`differentiation.py`, `spatial_comparisons.py` and `workflow.py`.
+See [bioinformatics/README.md](bioinformatics/README.md) for input definitions and
+method details. These are methodological illustrations; pathology review,
+registration and private reference inputs remain external. Cell annotations,
+three differentiation programs and four ecosystem labels are distinct objects.
 
 
 ## Feature_extractor
@@ -108,7 +121,7 @@ In Training Scripts, the train_CTP_Net.py script is used to train the tissue-pri
 $ cd ./Training Scripts
 $ python train_CTP_Net.py   #  training scripts 
 ```
-In Training Scripts, the train_TNSL_Net.py script is used to train the tissue-prior module.
+In Training Scripts, the train_TNSL_Net.py script is used to train the tumor-ecosystem-prior module.
 
 ```shell
 $ cd ./Training Scripts
