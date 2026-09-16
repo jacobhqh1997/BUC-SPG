@@ -79,7 +79,7 @@ $ cd ./Data_process
 $ python UC_report_standardization_ground_generation.py
 ```
 
-### Generate ** knowledge-guided patch representation**
+### Generate knowledge-guided patch representation
 
 - Create original  tissue probability heatmaps and Niche score distribution heatmap. WSIs are first processed by CTP-Net and TNSL-Net  to get  probability heatmaps, knowledge-guided patch representation: create tissue probability heatmaps and Niche score distribution heatmap
 
