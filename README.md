@@ -97,8 +97,7 @@ used by the histology models:
 
 The code is organized into `preprocessing.py`, `ecosystems.py`,
 `differentiation.py`, `spatial_comparisons.py` and `workflow.py`.
-See [bioinformatics/README.md](bioinformatics/README.md) for input definitions and
-method details. These are methodological illustrations; pathology review,
+These are methodological illustrations; pathology review,
 registration and private reference inputs remain external. Cell annotations,
 three differentiation programs and four ecosystem labels are distinct objects.
 
